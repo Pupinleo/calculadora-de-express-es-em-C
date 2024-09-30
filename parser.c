@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int conta();
+int termo();
+int fator();
+
+const char* calculo;
+char atualc;
+
+
+int principal(const char* expr) {
+    calculo = expr;
+    proxcar();
+    return conta();
+}
+
+// Função para avançar
+void proxcar() {
+    atualc = *calculo++;
+}
+
+// Função para verificar e consumir um caractere específico
+int consume(char c) {
+    while (isspace(atualc)) proxcar();
+    if (atualc == c) {
+        proxcar();
+        return 1;
+    }
+    return 0;
+}
+
+int conta() {
+    int result = termo();
+    while (1) {
+        if (consume('+')) {
+            result += termo();
+        } else if (consume('-')) {
+            result -= termo();
+        } else {
+            return result;
+        }
+    }
+}
+
+
+int termo() {
+    int result = fator();
+    while (1) {
+        if (consume('*')) {
+            result *= fator();
+        } else if (consume('/')) {
+            result /= fator();
+        } else {
+            return result;
+        }
+    }
+}
+
+
+int fator() {
+    int result;
+    if (consume('(')) {
+        result = conta();
+        consume(')');
+    } else {
+        result = 0;
+        while (isdigit(atualc)) {
+            result = result * 10 + (atualc - '0');
+            proxcar();
+        }
+    }
+    return result;
+}
+
+
+
+
+int main() {
+    char expr[100];
+    int looper = 1;
+
+    printf("CALCULADORA \n");
+    while(looper == 1){
+    printf("Digite o expressao desejada: ");
+    scanf("%s", expr);
+    int result = principal(expr);  // chamando a função principal
+    printf("Resposta: %d\n", result);
+    printf("Digite 1 se quiser continuar, qualquer outro numero encerrará o programa\n");
+    scanf("%i", &looper);
+    };
+    return 0;
+}
